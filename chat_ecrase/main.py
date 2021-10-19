@@ -8,7 +8,6 @@ res = (800, 645)
 inactive_color = (200, 0, 0)
 active_color = (255, 0, 0)
 
-pygame.display.set_caption("ecrase un chat")
 screen_surface = pygame.display.set_mode(res)
 
 launched = True
@@ -16,6 +15,7 @@ play_bool = 0
 sett_bool = 0
 
 while launched:
+    pygame.display.set_caption("ecrase un chat")
     accueil_img = pygame.image.load("images/accueil.jpg")
     screen_surface.blit(accueil_img, (0, 0))
     
@@ -25,7 +25,6 @@ while launched:
             os.remove("settings.data")
             launched = False
     if play_bool :
-        pygame.display.set_caption("maintenant, écrase les chats...")
         functions.ft_jouer(screen_surface)
         screen_surface = pygame.display.set_mode(res)
         pygame.mixer.music.stop()

@@ -32,7 +32,6 @@ def bg_static(screen_surface, bg):
         running = False
 
 def open_settings(screen_surface):
-    pygame.display.set_caption("modifie tes paramètres <3")
     screen_surface = pygame.display.set_mode((400, 300))
     
     bg = pygame.image.load("images/settings.jpg")
@@ -47,6 +46,7 @@ def open_settings(screen_surface):
     
     running = True
     while running :
+        pygame.display.set_caption("modifie tes paramètres <3")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sound_click()
@@ -55,13 +55,12 @@ def open_settings(screen_surface):
         if functions.button(screen_surface, "Back", 100, 100, 100, 45, active_color, inactive_color):
             running = False                
         if functions.button(screen_surface, "Sound :", 100, 25, 100, 45, active_color, inactive_color):
+            bg_static(screen_surface, bg)            
             if sound_status or sound == 1:
-                bg_static(screen_surface, bg)
                 affichage(screen_surface, "Off", 200, 25, 100, 45, black)
                 sound = 0
                 pygame.mixer.pause()
             elif sound_status == 0 or sound == 0:
-                bg_static(screen_surface, bg)
                 affichage(screen_surface, "On", 200, 25, 100, 45, black)
                 sound = 1
                 pygame.mixer.unpause()

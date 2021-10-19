@@ -1,4 +1,4 @@
-import pygame, settings
+import pygame, settings, random
 from pygame.locals import *
 
 inactive_color = (200, 0, 0)
@@ -50,22 +50,42 @@ class Player:
     def draw(self, screen_surface):
         screen_surface.blit(self.image, self.rect)
     
-    def collision_x(self, plateau):
+    def collision_x(self, plateau, screen_surface):
+        bool = True
         for obstacle in plateau.collisionList:
             if obstacle.rect.colliderect(self.rect):
-                if self.pos_x > 0:
-                    self.rect.right = obstacle.rect.left
-                elif self.pos_x < 0:
-                    self.rect.left = obstacle.rect.right
-
-    def collision_y(self, plateau):
+                if isinstance (obstacle, Obstacle):
+                    if self.pos_x > 0:
+                        self.rect.right = obstacle.rect.left
+                    elif self.pos_x < 0:
+                        self.rect.left = obstacle.rect.right
+                elif isinstance (obstacle, Player):
+                    failure_screen(screen_surface)
+                    bool = False
+        return bool
+                
+    def collision_y(self, plateau, screen_surface):
+        bool = True
         for obstacle in plateau.collisionList:
             if obstacle.rect.colliderect(self.rect):
-                if self.pos_y > 0:
-                    self.rect.bottom = obstacle.rect.top
-                if self.pos_y < 0:
-                    self.rect.top = obstacle.rect.bottom
+                if isinstance (obstacle, Obstacle):
+                    if self.pos_y > 0:
+                        self.rect.bottom = obstacle.rect.top
+                    elif self.pos_y < 0:
+                        self.rect.top = obstacle.rect.bottom
+                elif isinstance (obstacle, Player):
+                    failure_screen(screen_surface)
+                    bool = False
+        return bool
 
+def failure_screen(screen_surface):
+    aff = True
+    screen_fail = pygame.image.load("images/gameover.png")
+    while aff:
+        screen_surface.blit(screen_fail, (0, 0))
+        if button(screen_surface, "Ok >.<", 400, 300, 70, 45, active_color, inactive_color):
+            aff = False
+            
 class Obstacle:
     def __init__(self, x, y, name):
         self.x = x
@@ -107,13 +127,29 @@ class Plateau:
                     obstacle = Obstacle(i, j, 'p')
                     self.collisionList.append(obstacle)
                     obstacle.draw(screen_surface)
-
+                    
+    def spawn_ennemy(self, screen_surface, nb_ennemy):
+        ennemy = 0
+        self.list_plein = self.read_txt() 
+        ennemy_list = []
+        
+        while ennemy != nb_ennemy:
+            j = random.randint(1, len(self.list_plein)-1)
+            i = random.randint(1, len(self.list_plein[0])-1)
+            if self.list_plein[j][i] == 'v':
+                chat_pain = Player((i * 32), (j * 43), "mechant_chat_pain_")
+                self.collisionList.append(chat_pain)
+                ennemy_list.append(chat_pain)
+                ennemy += 1
+        return ennemy_list
+                
 def ft_jouer(screen_surface):
     screen_surface = pygame.display.set_mode((870,645))
     accueil_img = pygame.image.load("images/background.jpg")
     player = Player(0, 43, "boulanger_")
     player.draw(screen_surface)
     plateau = Plateau()
+    ennemy_list = plateau.spawn_ennemy(screen_surface, 1)
     pygame.mixer.init()
     pygame.mixer.music.load("sounds/music.mp3")
     pygame.mixer.music.set_volume(0.25)
@@ -121,6 +157,7 @@ def ft_jouer(screen_surface):
     
     running_game = True
     while running_game:
+        pygame.display.set_caption("maintenant, écrase les chats...")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running_game = False
@@ -128,23 +165,25 @@ def ft_jouer(screen_surface):
                 if event.key == K_LEFT:
                     player.left()
                     player.rect.x += player.pos_x
-                    player.collision_x(plateau)
+                    running_game = player.collision_x(plateau, screen_surface)
                 if event.key == K_RIGHT:
                     player.right()
                     player.rect.x += player.pos_x
-                    player.collision_x(plateau)
+                    running_game = player.collision_x(plateau, screen_surface)
                 if event.key == K_UP:
                     player.up()
                     player.rect.y += player.pos_y
-                    player.collision_y(plateau)
+                    running_game = player.collision_y(plateau, screen_surface)
                 if event.key == K_DOWN:
                     player.down()
                     player.rect.y += player.pos_y
-                    player.collision_y(plateau)
+                    running_game = player.collision_y(plateau, screen_surface)
  
         screen_surface.blit(accueil_img, (0, 0))
         plateau.create_collisionList(screen_surface)
         player.draw(screen_surface)
+        for i in ennemy_list:
+            i.draw(screen_surface)
         
         if button(screen_surface, "Back", 800, 0, 70, 45, active_color, inactive_color):
             running_game = False
