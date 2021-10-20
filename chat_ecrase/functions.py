@@ -51,7 +51,6 @@ class Player:
         screen_surface.blit(self.image, self.rect)
     
     def collision_x(self, plateau, screen_surface):
-        bool = True
         for obstacle in plateau.collisionList:
             if obstacle.rect.colliderect(self.rect):
                 if isinstance (obstacle, Obstacle):
@@ -61,11 +60,10 @@ class Player:
                         self.rect.left = obstacle.rect.right
                 elif isinstance (obstacle, Player):
                     failure_screen(screen_surface)
-                    bool = False
-        return bool
+                    return False
+        return True
                 
     def collision_y(self, plateau, screen_surface):
-        bool = True
         for obstacle in plateau.collisionList:
             if obstacle.rect.colliderect(self.rect):
                 if isinstance (obstacle, Obstacle):
@@ -75,17 +73,25 @@ class Player:
                         self.rect.top = obstacle.rect.bottom
                 elif isinstance (obstacle, Player):
                     failure_screen(screen_surface)
-                    bool = False
-        return bool
+                    return False
+        return True
 
 def failure_screen(screen_surface):
     aff = True
     screen_fail = pygame.image.load("images/gameover.png")
+    pygame.mixer.music.load("sounds/failure.mp3")
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
     while aff:
         screen_surface.blit(screen_fail, (0, 0))
-        if button(screen_surface, "Ok >.<", 400, 300, 70, 45, active_color, inactive_color):
+        pygame.display.set_caption("dommage")
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                aff = False
+        if button(screen_surface, "Ok", 400, 450, 70, 45, (50, 0, 0), (0, 0, 0)):
             aff = False
-            
+        pygame.display.update()
+        
 class Obstacle:
     def __init__(self, x, y, name):
         self.x = x
