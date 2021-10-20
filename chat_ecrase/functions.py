@@ -50,7 +50,7 @@ class Player:
     def draw(self, screen_surface):
         screen_surface.blit(self.image, self.rect)
     
-    def collision_x(self, plateau, screen_surface):
+    def collision_x(self, plateau, screen_surface, volume):
         for obstacle in plateau.collisionList:
             if obstacle.rect.colliderect(self.rect):
                 if isinstance (obstacle, Obstacle):
@@ -59,11 +59,11 @@ class Player:
                     elif self.pos_x < 0:
                         self.rect.left = obstacle.rect.right
                 elif isinstance (obstacle, Player):
-                    failure_screen(screen_surface)
+                    failure_screen(screen_surface, volume)
                     return False
         return True
                 
-    def collision_y(self, plateau, screen_surface):
+    def collision_y(self, plateau, screen_surface, volume):
         for obstacle in plateau.collisionList:
             if obstacle.rect.colliderect(self.rect):
                 if isinstance (obstacle, Obstacle):
@@ -72,15 +72,15 @@ class Player:
                     elif self.pos_y < 0:
                         self.rect.top = obstacle.rect.bottom
                 elif isinstance (obstacle, Player):
-                    failure_screen(screen_surface)
+                    failure_screen(screen_surface, volume)
                     return False
         return True
 
-def failure_screen(screen_surface):
+def failure_screen(screen_surface, volume):
     aff = True
     screen_fail = pygame.image.load("images/gameover.png")
     pygame.mixer.music.load("sounds/failure.mp3")
-    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.set_volume(0.5 * int(volume))
     pygame.mixer.music.play(-1)
     while aff:
         screen_surface.blit(screen_fail, (0, 0))
@@ -149,7 +149,7 @@ class Plateau:
                 ennemy += 1
         return ennemy_list
                 
-def ft_jouer(screen_surface):
+def ft_jouer(screen_surface, volume):
     screen_surface = pygame.display.set_mode((870,645))
     accueil_img = pygame.image.load("images/background.jpg")
     player = Player(0, 43, "boulanger_")
@@ -158,7 +158,7 @@ def ft_jouer(screen_surface):
     ennemy_list = plateau.spawn_ennemy(screen_surface, 1)
     pygame.mixer.init()
     pygame.mixer.music.load("sounds/music.mp3")
-    pygame.mixer.music.set_volume(0.25)
+    pygame.mixer.music.set_volume(0.25 * int(volume))
     pygame.mixer.music.play(-1) 
     
     running_game = True
@@ -171,19 +171,19 @@ def ft_jouer(screen_surface):
                 if event.key == K_LEFT:
                     player.left()
                     player.rect.x += player.pos_x
-                    running_game = player.collision_x(plateau, screen_surface)
+                    running_game = player.collision_x(plateau, screen_surface, volume)
                 if event.key == K_RIGHT:
                     player.right()
                     player.rect.x += player.pos_x
-                    running_game = player.collision_x(plateau, screen_surface)
+                    running_game = player.collision_x(plateau, screen_surface, volume)
                 if event.key == K_UP:
                     player.up()
                     player.rect.y += player.pos_y
-                    running_game = player.collision_y(plateau, screen_surface)
+                    running_game = player.collision_y(plateau, screen_surface, volume)
                 if event.key == K_DOWN:
                     player.down()
                     player.rect.y += player.pos_y
-                    running_game = player.collision_y(plateau, screen_surface)
+                    running_game = player.collision_y(plateau, screen_surface, volume)
  
         screen_surface.blit(accueil_img, (0, 0))
         plateau.create_collisionList(screen_surface)

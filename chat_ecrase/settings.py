@@ -17,8 +17,9 @@ def affichage(screen_surface, text, x, y, w, h, color):
     screen_surface.blit(my_text, textRect)
 
 def create_pickle_file():
+    sett_player = {"sound" : 1, "music" : 1}
     with open("settings.data", "wb") as fic:
-        pickle.dump(1, fic)
+        pickle.dump(sett_player, fic)
 
 def sound_bool(sound_status):
     if sound_status == 1:
@@ -39,10 +40,13 @@ def open_settings(screen_surface):
     
     with open("settings.data", "rb") as fic:
         get_record = pickle.Unpickler(fic)
-        sound_status = get_record.load()
-    sound = sound_bool(sound_status)
-    affichage(screen_surface, sound, 200, 25, 100, 45, black)
-
+        sett_status = get_record.load()
+    sound = sett_status["sound"]
+    volume = sett_status["music"]
+    sound_status = sound_bool(sound)
+    volume_status = sound_bool(volume)
+    affichage(screen_surface, sound_status, 200, 15, 100, 45, black)
+    affichage(screen_surface, volume_status, 200, 95, 100, 45, black)
     
     running = True
     while running :
@@ -52,21 +56,30 @@ def open_settings(screen_surface):
                 sound_click()
                 running = False
                 
-        if functions.button(screen_surface, "Back", 100, 100, 100, 45, active_color, inactive_color):
+        if functions.button(screen_surface, "Back", 100, 175, 100, 45, active_color, inactive_color):
             running = False                
-        if functions.button(screen_surface, "Sound :", 100, 25, 100, 45, active_color, inactive_color):
-            bg_static(screen_surface, bg)            
+        if functions.button(screen_surface, "Sound :", 100, 15, 100, 45, active_color, inactive_color):
+            #bg_static(screen_surface, bg)            
             if sound_status or sound == 1:
-                affichage(screen_surface, "Off", 200, 25, 100, 45, black)
+                affichage(screen_surface, "Off", 200, 15, 100, 45, black)
                 sound = 0
                 pygame.mixer.pause()
             elif sound_status == 0 or sound == 0:
-                affichage(screen_surface, "On", 200, 25, 100, 45, black)
+                affichage(screen_surface, "On", 200, 15, 100, 45, black)
                 sound = 1
                 pygame.mixer.unpause()
-            
+        if functions.button(screen_surface, "Music :", 100, 95, 100, 45, active_color, inactive_color):
+            #bg_static(screen_surface, bg)            
+            if volume_status or volume == 1:
+                affichage(screen_surface, "Off", 200, 95, 100, 45, black)
+                volume = 0
+            elif volume_status == 0 or volume == 0:
+                affichage(screen_surface, "On", 200, 95, 100, 45, black)
+                volume = 1
+                
+        sett_player = {"sound" : sound, "music" : volume}
         with open("settings.data", "wb") as fic:
                 record = pickle.Pickler(fic)
-                record.dump(sound)
+                record.dump(sett_player)
                                   
         pygame.display.update()

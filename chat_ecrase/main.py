@@ -1,4 +1,4 @@
-import pygame, functions, settings, os
+import pygame, functions, settings, os, pickle
 
 pygame.init()
 mainClock = pygame.time.Clock()
@@ -19,13 +19,18 @@ while launched:
     accueil_img = pygame.image.load("images/accueil.jpg")
     screen_surface.blit(accueil_img, (0, 0))
     
+    with open("settings.data", "rb") as fic:
+        get_record = pickle.Unpickler(fic)
+        sett_status = get_record.load()
+    volume = sett_status["music"]
+    
     pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             os.remove("settings.data")
             launched = False
     if play_bool :
-        functions.ft_jouer(screen_surface)
+        functions.ft_jouer(screen_surface, volume)
         screen_surface = pygame.display.set_mode(res)
         pygame.mixer.music.stop()
         play_bool = 0
