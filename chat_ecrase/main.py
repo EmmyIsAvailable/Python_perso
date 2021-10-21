@@ -41,7 +41,7 @@ while launched:
     
     if functions.button(screen_surface, "Play", 0, 600, 250, 45, active_color, inactive_color):
         play_bool = 1
-    if functions.button(screen_surface, "Infos", 275, 600, 250, 45, active_color, inactive_color):
+    if functions.button(screen_surface, "Settings", 275, 600, 250, 45, active_color, inactive_color):
         sett_bool = 1
     if functions.button(screen_surface, "Quit", 550, 600, 250, 45, active_color, inactive_color):
         os.remove("settings.data")

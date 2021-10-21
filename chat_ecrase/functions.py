@@ -8,22 +8,19 @@ def button(screen_surface, text, x, y, w, h, active_color, inactive_color):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     
-    pressed = False
     if x+w > mouse[0] > x and y+h > mouse[1] > y:
         pygame.draw.rect(screen_surface, active_color, (x, y, w, h))
         if click[0] == 1:
-            pressed = True
             settings.sound_click()
-            return pressed
+            return True
     else:
         pygame.draw.rect(screen_surface, inactive_color, (x, y, w, h))
-    
+        
     myfont = pygame.font.Font("images/Marline.otf", 45)
     button_text = myfont.render(text, True, (255, 255, 255))
     textRect = button_text.get_rect()
     textRect.center = (x+(w/2), y+(h/2))
     screen_surface.blit(button_text, textRect)
-    return pressed
 
 class Player:
     def __init__(self, x, y, name):
