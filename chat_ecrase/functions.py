@@ -4,14 +4,14 @@ from pygame.locals import *
 inactive_color = (200, 0, 0)
 active_color = (255, 0, 0)
 
-def button(screen_surface, text, x, y, w, h, active_color, inactive_color):
+def button(screen_surface, text, x, y, w, h, active_color, inactive_color, sound):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     
     if x+w > mouse[0] > x and y+h > mouse[1] > y:
         pygame.draw.rect(screen_surface, active_color, (x, y, w, h))
-        if click[0] == 1:
-            settings.sound_click()
+        if click[0]:
+            settings.sound_click(sound)
             return True
     else:
         pygame.draw.rect(screen_surface, inactive_color, (x, y, w, h))
@@ -85,7 +85,7 @@ def failure_screen(screen_surface, volume):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 aff = False
-        if button(screen_surface, "Ok", 400, 450, 70, 45, (50, 0, 0), (0, 0, 0)):
+        if button(screen_surface, "Ok", 400, 450, 70, 45, (50, 0, 0), (0, 0, 0), sound = False):
             aff = False
         pygame.display.update()
         
@@ -188,7 +188,7 @@ def ft_jouer(screen_surface, volume):
         for i in ennemy_list:
             i.draw(screen_surface)
         
-        if button(screen_surface, "Back", 800, 0, 70, 45, active_color, inactive_color):
+        if button(screen_surface, "Back", 800, 0, 70, 45, active_color, inactive_color, sound = False):
             running_game = False
         
         pygame.display.update()

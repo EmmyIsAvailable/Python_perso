@@ -23,6 +23,7 @@ while launched:
         get_record = pickle.Unpickler(fic)
         sett_status = get_record.load()
     volume = sett_status["music"]
+    sound = sett_status["sound"]
     
     pygame.display.flip()
     for event in pygame.event.get():
@@ -39,11 +40,11 @@ while launched:
         screen_surface = pygame.display.set_mode(res)
         sett_bool = 0
     
-    if functions.button(screen_surface, "Play", 0, 600, 250, 45, active_color, inactive_color):
+    if functions.button(screen_surface, "Play", 0, 600, 250, 45, active_color, inactive_color, sound):
         play_bool = 1
-    if functions.button(screen_surface, "Settings", 275, 600, 250, 45, active_color, inactive_color):
+    if functions.button(screen_surface, "Settings", 275, 600, 250, 45, active_color, inactive_color, sound):
         sett_bool = 1
-    if functions.button(screen_surface, "Quit", 550, 600, 250, 45, active_color, inactive_color):
+    if functions.button(screen_surface, "Quit", 550, 600, 250, 45, active_color, inactive_color, sound):
         os.remove("settings.data")
         pygame.quit()
         
